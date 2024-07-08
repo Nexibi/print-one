@@ -13,17 +13,21 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-latest]
-        php: [8.0, 8.1]
-        laravel: [8.*, 9.*]
+        php: [8.2]
+        laravel: [11.*]
         stability: [prefer-stable]
         include:
-          - laravel: 8.*
-            testbench: 6.*
           - laravel: 9.*
             testbench: 7.*
+            phpunit: ^9.5.10
+          - laravel: 10.*
+            testbench: 8.*
+            phpunit: ^9.6
+          - laravel: 11.*
+            testbench: 9.*
+            phpunit: ^10.5
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -42,7 +46,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "phpunit/phpunit:${{ matrix.phpunit }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: List Installed Dependencies
